@@ -61,6 +61,7 @@ public class Album {
             String query = "INSERT INTO Album (Title,ArtistId) VALUES (?, ?)";
             PreparedStatement ps = con.prepareStatement(query);
 
+
             //Modifiquem i executem la PreparedStatement
             ps.setString(1,titol);
             ps.setInt(2,idArtista);
@@ -68,11 +69,16 @@ public class Album {
 
             // Obtenim claus autogenerades
             ResultSet rs = ps.getGeneratedKeys();
-            rs.next(); // Sabem que només n'hi ha una
-            idAlbumNou = rs.getInt(1);
+            if (!artistExists(rs)){
+                System.out.println("No such artist with the provided ID.");
+            }
+            else {
+                rs.next(); // Sabem que només n'hi ha una
+                idAlbumNou = rs.getInt(1);
 
-            ps.close();
-            System.out.println("Records created successfully");
+                ps.close();
+                System.out.println("Records created successfully");
+            }
             return idAlbumNou;
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName() + ": " + e.getMessage() );
@@ -90,11 +96,14 @@ public class Album {
             ps.setInt(1,idAlbum);
 
             ResultSet rs = ps.executeQuery();
-            while ( rs.next() ) {
-                int albumId = rs.getInt("AlbumId");
-                String  title = rs.getString("Title");
-                int  artistId = rs.getInt("ArtistId");
-                album = new Album(albumId, title, artistId);
+
+             {
+                while (rs.next()) {
+                    int albumId = rs.getInt("AlbumId");
+                    String title = rs.getString("Title");
+                    int artistId = rs.getInt("ArtistId");
+                    album = new Album(albumId, title, artistId);
+                }
             }
             rs.close();
             ps.close();
@@ -164,5 +173,18 @@ public class Album {
         }
         System.out.println("Operation done successfully");
         return albums;
+    }
+
+    public boolean artistExists(ResultSet rs){
+        try{
+            Integer idArtista = rs.getInt("ArtistId");
+            if (idArtista == null){
+                return false;
+            }
+            else return true;
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return false;
     }
 }
