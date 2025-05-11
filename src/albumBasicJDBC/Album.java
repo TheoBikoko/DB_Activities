@@ -54,6 +54,9 @@ public class Album {
 
     public int creaAlbum(String titol, int idArtista)
     {
+        if (!existeixArtista(idArtista)){
+            throw new IllegalArgumentException("No existeix un artista amb ID :" + idArtista + ".");
+        }
         Statement stmt = null;
         int idAlbumNou = -1;
         try {
@@ -69,16 +72,11 @@ public class Album {
 
             // Obtenim claus autogenerades
             ResultSet rs = ps.getGeneratedKeys();
-            if (!artistExists(rs)){
-                System.out.println("No such artist with the provided ID.");
-            }
-            else {
                 rs.next(); // Sabem que només n'hi ha una
                 idAlbumNou = rs.getInt(1);
 
                 ps.close();
                 System.out.println("Records created successfully");
-            }
             return idAlbumNou;
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName() + ": " + e.getMessage() );
@@ -116,6 +114,9 @@ public class Album {
 
     public void modificaAlbum(int idAlbum, String nouTitol, int nouIdArtista)
     {
+        if (!existeixArtista(idArtista)){
+            throw new IllegalArgumentException("No existeix un artista amb ID :" + idArtista + ".");
+        }
         Statement stmt = null;
         try {
             con.setAutoCommit(false);
@@ -175,16 +176,21 @@ public class Album {
         return albums;
     }
 
-    public boolean artistExists(ResultSet rs){
-        try{
-            Integer idArtista = rs.getInt("ArtistId");
-            if (idArtista == null){
-                return false;
-            }
-            else return true;
-        }catch (Exception e){
-            System.out.println(e.getMessage());
+    //1
+    public boolean existeixArtista (int idArtista){
+        try {
+            String query = "SELECT 3 FROM Album WHERE ArtistId = ?";
+            PreparedStatement ps = con.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+            boolean existeix = rs.next();
+            rs.close();
+            ps.close();
+            return existeix;
+
+        }  catch ( Exception e ) {
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+            return false;
         }
-        return false;
+
     }
 }
