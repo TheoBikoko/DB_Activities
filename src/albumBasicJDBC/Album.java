@@ -8,16 +8,17 @@ public class Album {
 
     private int idAlbum;
     private String titol;
-    private int idArtista;
+    private Artist artista;
     private static Connection con = Connexio.getConnection();
 
-    public Album(){
+    public Album() {
         super();
     }
+
     public Album(int idAlbum, String titol, int idArtista) {
         this.idAlbum = idAlbum;
         this.titol = titol;
-        this.idArtista = idArtista;
+        this.artista = artista;
     }
 
     public int getIdAlbum() {
@@ -36,12 +37,12 @@ public class Album {
         this.titol = titol;
     }
 
-    public int getIdArtista() {
-        return idArtista;
+    public Artist getArtista() {
+        return artista;
     }
 
-    public void setIdArtista(int idArtista) {
-        this.idArtista = idArtista;
+    public void setArtista(Artist artista) {
+        this.artista = artista;
     }
 
     @Override
@@ -49,12 +50,11 @@ public class Album {
         return "\nAlbum: " +
                 "id=" + idAlbum +
                 ", nom='" + titol + '\'' +
-                ", artista id=" + idArtista;
+                ", artista =" + artista;
     }
 
-    public int creaAlbum(String titol, int idArtista)
-    {
-        if (!existeixArtista(idArtista)){
+    public int creaAlbum(String titol, int idArtista) {
+        if (!existeixArtista(idArtista)) {
             throw new IllegalArgumentException("No existeix un artista amb ID :" + idArtista + ".");
         }
         Statement stmt = null;
@@ -66,36 +66,35 @@ public class Album {
 
 
             //Modifiquem i executem la PreparedStatement
-            ps.setString(1,titol);
-            ps.setInt(2,idArtista);
+            ps.setString(1, titol);
+            ps.setInt(2, idArtista);
             ps.executeUpdate();
 
             // Obtenim claus autogenerades
             ResultSet rs = ps.getGeneratedKeys();
-                rs.next(); // Sabem que només n'hi ha una
-                idAlbumNou = rs.getInt(1);
+            rs.next(); // Sabem que només n'hi ha una
+            idAlbumNou = rs.getInt(1);
 
-                ps.close();
-                System.out.println("Records created successfully");
+            ps.close();
+            System.out.println("Records created successfully");
             return idAlbumNou;
-        } catch ( Exception e ) {
-            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
         return idAlbumNou;
     }
 
-    public Album llegeixAlbum(int idAlbum)
-    {
+    public Album llegeixAlbum(int idAlbum) {
         Statement stmt = null;
         Album album = null;
         try {
             String query = "SELECT * FROM Album WHERE AlbumId = ?";
             PreparedStatement ps = con.prepareStatement(query);
-            ps.setInt(1,idAlbum);
+            ps.setInt(1, idAlbum);
 
             ResultSet rs = ps.executeQuery();
 
-             {
+            {
                 while (rs.next()) {
                     int albumId = rs.getInt("AlbumId");
                     String title = rs.getString("Title");
@@ -105,16 +104,15 @@ public class Album {
             }
             rs.close();
             ps.close();
-        } catch ( Exception e ) {
-            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
         System.out.println("Operation done successfully");
         return album;
     }
 
-    public void modificaAlbum(int idAlbum, String nouTitol, int nouIdArtista)
-    {
-        if (!existeixArtista(idArtista)){
+    public void modificaAlbum(int idAlbum, String nouTitol, int nouIdArtista) {
+        if (!existeixArtista(idArtista)) {
             throw new IllegalArgumentException("No existeix un artista amb ID :" + idArtista + ".");
         }
         Statement stmt = null;
@@ -123,61 +121,59 @@ public class Album {
             String query = "UPDATE Album set Title = ?, ArtistId = ? WHERE AlbumId = ?";
             PreparedStatement ps = con.prepareStatement(query);
 
-            ps.setString(1,nouTitol);
-            ps.setInt(2,nouIdArtista);
-            ps.setInt(3,idAlbum);
+            ps.setString(1, nouTitol);
+            ps.setInt(2, nouIdArtista);
+            ps.setInt(3, idAlbum);
             ps.executeUpdate();
             con.commit();
             ps.close();
-        } catch ( Exception e ) {
-            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
         System.out.println("Operation done successfully");
     }
 
-    public void eliminaAlbum(int idAlbum)
-    {
+    public void eliminaAlbum(int idAlbum) {
         try {
             con.setAutoCommit(false);
             String query = "DELETE from Album where AlbumId=?";
             PreparedStatement ps = con.prepareStatement(query);
-            ps.setInt(1,idAlbum);
+            ps.setInt(1, idAlbum);
             ps.executeUpdate();
             con.commit();
             ps.close();
-        } catch ( Exception e ) {
-            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
         System.out.println("Operation done successfully");
     }
 
-    public List<Album> seleccionaAlbums()
-    {
+    public List<Album> seleccionaAlbums() {
         Statement stmt = null;
         List<Album> albums = new ArrayList<>();
         try {
             //Crear una consulta / query amb un object Statement
             stmt = con.createStatement();
             //Executar la consulta
-            ResultSet rs = stmt.executeQuery( "SELECT * FROM Album;" );
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Album;");
             //Procesar el resultat amb l’objecte ResultSet
-            while ( rs.next() ) {
+            while (rs.next()) {
                 int albumId = rs.getInt("AlbumId");
-                String  title = rs.getString("Title");
-                int  artistId = rs.getInt("ArtistId");
+                String title = rs.getString("Title");
+                int artistId = rs.getInt("ArtistId");
                 albums.add(new Album(albumId, title, artistId));
             }
             rs.close();
             stmt.close();
-        } catch ( Exception e ) {
-            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
         System.out.println("Operation done successfully");
         return albums;
     }
 
     //1
-    public boolean existeixArtista (int idArtista){
+    public boolean existeixArtista(int idArtista) {
         try {
             String query = "SELECT 3 FROM Album WHERE ArtistId = ?";
             PreparedStatement ps = con.prepareStatement(query);
@@ -187,10 +183,27 @@ public class Album {
             ps.close();
             return existeix;
 
-        }  catch ( Exception e ) {
-            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
             return false;
         }
+    }
 
+    public Artist llegirArtista(int idArtista) {
+        try {
+            String query = "SELECT * FROM Artist WHERE ArtistId = ?";
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setInt(1, idArtista);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Artist(rs.getInt("ArtistId"), rs.getString("Name"));
+            }
+            rs.close();
+            ps.close();
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+        return null;
     }
 }

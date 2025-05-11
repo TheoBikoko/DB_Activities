@@ -1,24 +1,21 @@
 package albumBasicJDBC;
 
 public class Artist {
-    private int ArtistId;
+    private int artistId;
     private String name;
-    private int age;
-    private int debutYear;
 
-    public Artist(int artistId, String name, int age, int debutYear) {
-        ArtistId = artistId;
+
+    public Artist(int artistId, String name) {
+        this.artistId = artistId;
         this.name = name;
-        this.age = age;
-        this.debutYear = debutYear;
     }
 
     public int getArtistId() {
-        return ArtistId;
+        return artistId;
     }
 
     public void setArtistId(int artistId) {
-        ArtistId = artistId;
+        artistId = artistId;
     }
 
     public String getName() {
@@ -29,29 +26,11 @@ public class Artist {
         this.name = name;
     }
 
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public int getDebutYear() {
-        return debutYear;
-    }
-
-    public void setDebutYear(int debutYear) {
-        this.debutYear = debutYear;
-    }
-
     @Override
     public String toString() {
         return "Artist{" +
-                "ArtistId=" + ArtistId +
+                "ArtistId=" + artistId +
                 ", name='" + name + '\'' +
-                ", age=" + age +
-                ", debutYear=" + debutYear +
                 '}';
     }
 }
