@@ -1,10 +1,7 @@
 //3
 package albumBasicJDBC;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +28,10 @@ public class Track {
         this.milliseconds = milliseconds;
         this.bytes = bytes;
         this.unitPrice = unitPrice;
+    }
+
+    public Track() {
+        super();
     }
 
     public int getTrackId() {
@@ -120,6 +121,32 @@ public class Track {
                 '}';
     }
 
+    public int creaTrack(int trackId, String titol, int albumId, MediaType mediaType, Genre genre, String composer, int milliseconds, int bytes, double unitPrice){
+        int nouTrack = -1;
+        try {
+            String query = "INSERT INTO Track (TrackId, Name, AlbumId, MediaTypeId, GenreId, Composer, Milliseconds, Bytes, UnitPrice) VALUES (?,?,?,?,?,?,?,?,?)";
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setInt(1, trackId);
+            ps.setString(2, titol);
+            ps.setInt(3, albumId);
+            ps.setInt(4, mediaType.getMediaTypeId());
+            ps.setInt(5, genre.getGenreId());
+            ps.setString(6, composer);
+            ps.setInt(7, milliseconds);
+            ps.setInt(8, bytes);
+            ps.setDouble(9, unitPrice);
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            rs.next();
+            nouTrack = rs.getInt(1);
+            System.out.println("Track created succesfully");
+            return nouTrack;
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+        return nouTrack;
+    }
+
     public Track llegirTrack(int trackId){
         Statement stmt;
         try {
@@ -131,8 +158,17 @@ public class Track {
                 String titol = rs.getString("Name");
                 int albumId = rs.getInt("AlbumId");
                 MediaType mediaType = llegirMediaType(rs.getInt("MediaTypeId"));
+                Genre genre = llegirGenre(rs.getInt("GenreId"));
+                String compositor = rs.getString("Composer");
+                int ms = rs.getInt("Milliseconds");
+                int bytes = rs.getInt("Bytes");
+                double unitPrice = rs.getDouble("UnitPrice");
 
-                return new Track(trackId, titol, albumId);
+                rs.close();
+                stmt.close();
+
+                System.out.println("Track read succesfully.");
+                return new Track(trackId, titol, albumId, mediaType, genre, compositor, ms, bytes, unitPrice);
             }
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
@@ -150,13 +186,62 @@ public class Track {
 
             while (rs.next()){
                 int trackId = rs.getInt("TrackId");
-                tracks.add(llegirTrack(trackId));
+                String titol = rs.getString("Name");
+                int albumId = rs.getInt("AlbumId");
+                MediaType mediaType = llegirMediaType(rs.getInt("MediaTypeId"));
+                Genre genre = llegirGenre(rs.getInt("GenreId"));
+                String compositor = rs.getString("Composer");
+                int ms = rs.getInt("Milliseconds");
+                int bytes = rs.getInt("Bytes");
+                double unitPrice = rs.getDouble("UnitPrice");
+
+                Track track = new Track(trackId, titol, albumId, mediaType, genre, compositor, ms, bytes, unitPrice);
+
+                tracks.add(track);
             }
             return tracks;
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
         return null;
+    }
+
+    public void modificaTrack(int trackId, String titol, int albumId, MediaType mediaType, Genre genre, String composer, int milliseconds, int bytes, double unitPrice){
+        try{
+            con.setAutoCommit(false);
+            String query = "UPDATE Track SET Name = ?, AlbumId= ?, MediaTypeId = ?, GenreId = ?, Composer = ?, Milliseconds = ?, Bytes = ?,  UnitPrice = ? WHERE TrackId = ?";
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setInt(1, trackId);
+            ps.setString(2, titol);
+            ps.setInt(3, albumId);
+            ps.setInt(4, mediaType.getMediaTypeId());
+            ps.setInt(5, genre.getGenreId());
+            ps.setString(6, composer);
+            ps.setInt(7, milliseconds);
+            ps.setInt(8, bytes);
+            ps.setDouble(9, unitPrice);
+            ps.executeUpdate();
+            con.commit();
+            ps.close();
+
+            System.out.println("Track updated succesfully");
+        }catch (Exception e){
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
+    public void eliminaTrack(int trackId){
+        try {
+            String query = "DELETE FROM Track WHERE TrackId = ?";
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.executeUpdate();
+            con.commit();
+            ps.close();
+            System.out.println("Track deleted succesfully");
+
+        } catch (Exception e){
+            System.out.println(e.getClass().getName() + ": " + e.getMessage());
+        }
     }
 
     public MediaType llegirMediaType(int mediaTypeId) {
