@@ -31,7 +31,7 @@ public class TrackMenu {
                     break;
                 }
                 case 2:{
-                    System.out.println("Introdueix quina cançó vols veure");
+                    System.out.println("Introdueix quina cançó vols veure (ID)");
                     int trackId = sc.nextInt();sc.nextLine();
                     Track trackTrobat = track.llegirTrack(trackId);
                     System.out.println(trackTrobat);
@@ -39,51 +39,51 @@ public class TrackMenu {
                     break;
                 }
                 case 3:{
-                    System.out.println("Introdueix TrackId nou");
+                    System.out.println("Introdueix TrackId nou (ID)");
                     int trackId = sc.nextInt();sc.nextLine();
-                    System.out.println("Introdueix el titol nou");
+                    System.out.println("Introdueix el titol nou (Text)");
                     String titol = sc.nextLine();
-                    System.out.println("Introdueix el AlbumId nou");
+                    System.out.println("Introdueix el AlbumId nou (Numero)");
                     int albumId = sc.nextInt();sc.nextLine();
-                    System.out.println("Introdueix el MediaType nou");
+                    System.out.println("Introdueix el MediaType nou (Numero)");
                     int mediaType = sc.nextInt();sc.nextLine();
-                    System.out.println("Introdueix el genere nou");
+                    System.out.println("Introdueix el genere nou (Numero)");
                     int genre = sc.nextInt();sc.nextLine();
-                    System.out.println("Introdueix el compositor nou");
+                    System.out.println("Introdueix el compositor nou (Numero)");
                     String compositor = sc.nextLine();
-                    System.out.println("Introdueix els milisegons");
+                    System.out.println("Introdueix els milisegons (Numero)");
                     int miliseconds = sc.nextInt();sc.nextLine();
-                    System.out.println("Introdueix la quantitat de bytes");
+                    System.out.println("Introdueix la quantitat de bytes (Numero)");
                     int bytes = sc.nextInt();sc.nextLine();
-                    System.out.println("Introdueix el preu");
+                    System.out.println("Introdueix el preu (Numero decimal)");
                     double price = sc.nextDouble();
                     System.out.println(track.creaTrack(trackId, titol, albumId, track.llegirMediaType(mediaType), track.llegirGenre(genre), compositor, miliseconds, bytes, price));
                     break;
                 }
                 case 4:{
-                    System.out.println("Introdueix quina cançó vols modificar");
+                    System.out.println("Introdueix quina cançó vols modificar (ID)");
                     int trackId = sc.nextInt();sc.nextLine();
-                    System.out.println("Introdueix el titol nou");
+                    System.out.println("Introdueix el titol nou (Text)");
                     String titol = sc.nextLine();
-                    System.out.println("Introdueix el AlbumId nou");
+                    System.out.println("Introdueix el AlbumId nou (Numero)");
                     int albumId = sc.nextInt();sc.nextLine();
-                    System.out.println("Introdueix el MediaType nou");
+                    System.out.println("Introdueix el MediaType nou (Numero)");
                     int mediaType = sc.nextInt();sc.nextLine();
-                    System.out.println("Introdueix el genere nou");
+                    System.out.println("Introdueix el genere nou (Numero)");
                     int genre = sc.nextInt();sc.nextLine();
-                    System.out.println("Introdueix el compositor nou");
+                    System.out.println("Introdueix el compositor nou (Text)");
                     String compositor = sc.nextLine();
-                    System.out.println("Introdueix els milisegons");
+                    System.out.println("Introdueix els milisegons (Numero)");
                     int miliseconds = sc.nextInt();sc.nextLine();
-                    System.out.println("Introdueix la quantitat de bytes");
+                    System.out.println("Introdueix la quantitat de bytes (Numero)");
                     int bytes = sc.nextInt();sc.nextLine();
-                    System.out.println("Introdueix el preu");
+                    System.out.println("Introdueix el preu (Numero decimal)");
                     double price = sc.nextDouble();
                     track.modificaTrack(trackId, titol, albumId, track.llegirMediaType(mediaType), track.llegirGenre(genre), compositor, miliseconds, bytes, price);
                     break;
                 }
                 case 5:{
-                    System.out.println("Introdueix quina cançó vols eliminar");
+                    System.out.println("Introdueix quina cançó vols eliminar (ID)");
                     int trackId = sc.nextInt();sc.nextLine();
                     track.eliminaTrack(trackId);
                     break;

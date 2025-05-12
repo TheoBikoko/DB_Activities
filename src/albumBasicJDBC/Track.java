@@ -30,6 +30,15 @@ public class Track {
         this.unitPrice = unitPrice;
     }
 
+    public Track(int trackId, String titol, int albumId, MediaType mediaType, Genre genre, String composer) {
+        this.trackId = trackId;
+        this.titol = titol;
+        this.albumId = albumId;
+        this.mediaType = mediaType;
+        this.genre = genre;
+        this.composer = composer;
+    }
+
     public Track() {
         super();
     }
@@ -108,17 +117,12 @@ public class Track {
 
     @Override
     public String toString() {
-        return "Track{" +
-                "trackId=" + trackId +
-                ", titol='" + titol + '\'' +
-                ", albumId=" + albumId +
-                ", mediaTypeId=" + mediaType +
-                ", genreId=" + genre +
-                ", composer='" + composer + '\'' +
-                ", milliseconds=" + milliseconds +
-                ", bytes=" + bytes +
-                ", unitPrice=" + unitPrice +
-                '}';
+        return String.format(
+                "Track %d: %s | Album: %d | Génere: %s | Tipus: %s%n | Compositor: %s" + "\n",
+                trackId, titol, albumId, genre.getNom(),
+                mediaType.getName(), composer
+        );
+
     }
 
     public int creaTrack(int trackId, String titol, int albumId, MediaType mediaType, Genre genre, String composer, int milliseconds, int bytes, double unitPrice){
@@ -150,9 +154,10 @@ public class Track {
     public Track llegirTrack(int trackId){
         Statement stmt;
         try {
-            String query = "SELECT * FROM Track WHERE TrackId = ?";
-            stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+            String query = "SELECT TrackId, Name, AlbumId, MediaTypeId, GenreId, Composer FROM Track WHERE TrackId = ?";
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setInt(1, trackId);
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()){
                 String titol = rs.getString("Name");
@@ -160,15 +165,12 @@ public class Track {
                 MediaType mediaType = llegirMediaType(rs.getInt("MediaTypeId"));
                 Genre genre = llegirGenre(rs.getInt("GenreId"));
                 String compositor = rs.getString("Composer");
-                int ms = rs.getInt("Milliseconds");
-                int bytes = rs.getInt("Bytes");
-                double unitPrice = rs.getDouble("UnitPrice");
 
                 rs.close();
-                stmt.close();
+                ps.close();
 
                 System.out.println("Track read succesfully.");
-                return new Track(trackId, titol, albumId, mediaType, genre, compositor, ms, bytes, unitPrice);
+                return new Track(trackId, titol, albumId, mediaType, genre, compositor);
             }
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
@@ -180,7 +182,7 @@ public class Track {
         Statement stmt;
         ArrayList<Track> tracks = new ArrayList<>();
         try {
-            String query = "SELECT * FROM Track";
+            String query = "SELECT TrackId, Name, AlbumId, MediaTypeId, GenreId, Composer FROM Track";
             stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
@@ -191,11 +193,8 @@ public class Track {
                 MediaType mediaType = llegirMediaType(rs.getInt("MediaTypeId"));
                 Genre genre = llegirGenre(rs.getInt("GenreId"));
                 String compositor = rs.getString("Composer");
-                int ms = rs.getInt("Milliseconds");
-                int bytes = rs.getInt("Bytes");
-                double unitPrice = rs.getDouble("UnitPrice");
 
-                Track track = new Track(trackId, titol, albumId, mediaType, genre, compositor, ms, bytes, unitPrice);
+                Track track = new Track(trackId, titol, albumId, mediaType, genre, compositor);
 
                 tracks.add(track);
             }
@@ -209,17 +208,17 @@ public class Track {
     public void modificaTrack(int trackId, String titol, int albumId, MediaType mediaType, Genre genre, String composer, int milliseconds, int bytes, double unitPrice){
         try{
             con.setAutoCommit(false);
-            String query = "UPDATE Track SET Name = ?, AlbumId= ?, MediaTypeId = ?, GenreId = ?, Composer = ?, Milliseconds = ?, Bytes = ?,  UnitPrice = ? WHERE TrackId = ?";
+            String query = "UPDATE Track set Name = ?, AlbumId= ?, MediaTypeId = ?, GenreId = ?, Composer = ?, Milliseconds = ?, Bytes = ?,  UnitPrice = ? WHERE TrackId = ?";
             PreparedStatement ps = con.prepareStatement(query);
-            ps.setInt(1, trackId);
-            ps.setString(2, titol);
-            ps.setInt(3, albumId);
-            ps.setInt(4, mediaType.getMediaTypeId());
-            ps.setInt(5, genre.getGenreId());
-            ps.setString(6, composer);
-            ps.setInt(7, milliseconds);
-            ps.setInt(8, bytes);
-            ps.setDouble(9, unitPrice);
+            ps.setString(1, titol);
+            ps.setInt(2, albumId);
+            ps.setInt(3, mediaType.getMediaTypeId());
+            ps.setInt(4, genre.getGenreId());
+            ps.setString(5, composer);
+            ps.setInt(6, milliseconds);
+            ps.setInt(7, bytes);
+            ps.setDouble(8, unitPrice);
+            ps.setInt(9, trackId);
             ps.executeUpdate();
             con.commit();
             ps.close();
@@ -232,8 +231,10 @@ public class Track {
 
     public void eliminaTrack(int trackId){
         try {
+            con.setAutoCommit(false);
             String query = "DELETE FROM Track WHERE TrackId = ?";
             PreparedStatement ps = con.prepareStatement(query);
+            ps.setInt(1, trackId);
             ps.executeUpdate();
             con.commit();
             ps.close();
