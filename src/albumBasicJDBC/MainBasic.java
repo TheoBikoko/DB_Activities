@@ -49,7 +49,7 @@ public class MainBasic {
                     int idAlbum = sc.nextInt();sc.nextLine();
                     System.out.println("Introdueix el nou títol");
                     String titol = sc.nextLine();
-                    System.out.println("Introdueix el idArtista nou");
+                    System.out.println("Introdueix el idArtista nou");  
                     int idArtista = sc.nextInt();sc.nextLine();
                     album.modificaAlbum(idAlbum, titol, idArtista);
                     break;

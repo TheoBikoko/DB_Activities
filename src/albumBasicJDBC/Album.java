@@ -15,7 +15,7 @@ public class Album {
         super();
     }
 
-    public Album(int idAlbum, String titol, int idArtista) {
+    public Album(int idAlbum, String titol, Artist artista) {
         this.idAlbum = idAlbum;
         this.titol = titol;
         this.artista = artista;
@@ -99,7 +99,8 @@ public class Album {
                     int albumId = rs.getInt("AlbumId");
                     String title = rs.getString("Title");
                     int artistId = rs.getInt("ArtistId");
-                    album = new Album(albumId, title, artistId);
+                    Artist artista = llegirArtista(artistId);
+                    album = new Album(albumId, title, artista);
                 }
             }
             rs.close();
@@ -112,8 +113,8 @@ public class Album {
     }
 
     public void modificaAlbum(int idAlbum, String nouTitol, int nouIdArtista) {
-        if (!existeixArtista(idArtista)) {
-            throw new IllegalArgumentException("No existeix un artista amb ID :" + idArtista + ".");
+        if (!existeixArtista(nouIdArtista)) {
+            throw new IllegalArgumentException("No existeix un artista amb ID :" + nouIdArtista + ".");
         }
         Statement stmt = null;
         try {
@@ -161,7 +162,8 @@ public class Album {
                 int albumId = rs.getInt("AlbumId");
                 String title = rs.getString("Title");
                 int artistId = rs.getInt("ArtistId");
-                albums.add(new Album(albumId, title, artistId));
+                Artist artista = llegirArtista(artistId);
+                albums.add(new Album(albumId, title, artista));
             }
             rs.close();
             stmt.close();
@@ -189,6 +191,7 @@ public class Album {
         }
     }
 
+    //2
     public Artist llegirArtista(int idArtista) {
         try {
             String query = "SELECT * FROM Artist WHERE ArtistId = ?";
