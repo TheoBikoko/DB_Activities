@@ -2,11 +2,11 @@ package albumBasicJDBC;
 
 public class MediaType {
     private int mediaTypeId;
-    private String type;
+    private String name;
 
-    public MediaType(int mediaTypeId, String type) {
+    public MediaType(int mediaTypeId, String name) {
         this.mediaTypeId = mediaTypeId;
-        this.type = type;
+        this.name = name;
     }
 
     public int getMediaTypeId() {
@@ -17,19 +17,20 @@ public class MediaType {
         this.mediaTypeId = mediaTypeId;
     }
 
-    public String getType() {
-        return type;
+    public String getName() {
+        return name;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
     public String toString() {
         return "MediaType{" +
                 "mediaTypeId=" + mediaTypeId +
-                ", type='" + type + '\'' +
+                ", name='" + name + '\'' +
                 '}';
     }
 }
+
