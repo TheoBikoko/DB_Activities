@@ -1,4 +1,4 @@
-package sqlInjection;
+package pt15.sqlInjection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

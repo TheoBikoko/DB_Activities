@@ -1,4 +1,4 @@
-package sqlInjection;
+package pt15.albumDao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,6 +10,9 @@ public class Connexio {
     public static Connection getConnection()
     {
         if (con == null ){
+            String url = "jdbc:mysql:// localhost:3306/org";
+            String user = "root";
+            String pass = "root";
             try {
                 Class.forName("org.sqlite.JDBC");
                 con = DriverManager.getConnection("jdbc:sqlite:Chinook_Sqlite.sqlite");

@@ -1,39 +1,41 @@
-package albumBasicJDBC;
+package pt15.albumDao;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Scanner;
 
-public class MainBasic {
+public class MainDAO
+{
     public void menu(){
         System.out.println("Diguis quina opció vols executar:\n"
-                        + "1) Llista els albums\n"
-                        + "2) Selecciona un sol album\n"
-                        + "3) Introdueix un album\n"
-                        + "4) Modifica un album\n"
-                        + "5) Elimina un album\n"
-                        + "0) Sortir\n"
-                );
+                + "1) Llista els albums\n"
+                + "2) Selecciona un sol album\n"
+                + "3) Introdueix un album\n"
+                + "4) Modifica un album\n"
+                + "5) Elimina un album\n"
+                + "0) Sortir\n"
+        );
     }
 
     public static void main( String args[] ) throws SQLException {
-        Album album = new Album();
+        Connection c = Connexio.getConnection();
+        AlbumDao albumDao = new AlbumDaoImplementacio();
+        MainDAO mainDAO = new MainDAO();
+
+        mainDAO.menu();
         Scanner sc = new Scanner(System.in);
-        MainBasic main = new MainBasic();
-        main.menu();
-        int opcio = sc.nextInt();sc.nextLine();
+        int opcio = sc.nextInt(); sc.nextLine();
 
         while (opcio!=0){
             switch(opcio){
                 case 1: {
-                    System.out.println(album.seleccionaAlbums());
+                    System.out.println(albumDao.getAlbums());
                     break;
                 }
                 case 2:{
                     System.out.println("Introdueix quin album vols veure");
                     int idAlbum = sc.nextInt();sc.nextLine();
-                    Album albumLlegit = album.llegeixAlbum(idAlbum);
-                    System.out.println(albumLlegit);
-                    System.out.println();
+                    System.out.println(albumDao.read(idAlbum));
                     break;
                 }
                 case 3:{
@@ -41,7 +43,7 @@ public class MainBasic {
                     String titol = sc.nextLine();
                     System.out.println("Introdueix idArtista nou");
                     int idArtista = sc.nextInt();sc.nextLine();
-                    System.out.println(album.creaAlbum(titol, idArtista));
+                    System.out.println("Creat album: " + albumDao.create(new Album(0, titol, idArtista)));
                     break;
                 }
                 case 4:{
@@ -49,18 +51,19 @@ public class MainBasic {
                     int idAlbum = sc.nextInt();sc.nextLine();
                     System.out.println("Introdueix el nou títol");
                     String titol = sc.nextLine();
-                    System.out.println("Introdueix el idArtista nou");  
+                    System.out.println("Introdueix el idArtista nou");
                     int idArtista = sc.nextInt();sc.nextLine();
-                    album.modificaAlbum(idAlbum, titol, idArtista);
+                    albumDao.update(new Album(idAlbum, titol, idArtista));
                     break;
                 }
                 case 5:{
                     System.out.println("Introdueix quin album vols eliminar");
                     int idAlbum = sc.nextInt();sc.nextLine();
-                    album.eliminaAlbum(idAlbum);
+                    albumDao.delete(idAlbum);
                     break;
                 }
                 case 0:{
+
                     break;
                 }
                 default:{
@@ -69,9 +72,10 @@ public class MainBasic {
                 }
             }
 
-            main.menu();
+            mainDAO.menu();
             opcio = sc.nextInt();sc.nextLine();
         }
 
+        c.close();
     }
 }

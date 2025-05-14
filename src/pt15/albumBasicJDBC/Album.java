@@ -1,4 +1,4 @@
-package albumBasicJDBC;
+package pt15.albumBasicJDBC;
 
 import java.sql.*;
 import java.util.ArrayList;

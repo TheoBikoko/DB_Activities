@@ -1,4 +1,4 @@
-package albumBasicJDBC;
+package pt15.albumBasicJDBC;
 
 public class Genre {
     private int genreId;

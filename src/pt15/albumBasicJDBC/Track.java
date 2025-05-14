@@ -1,5 +1,5 @@
 //3
-package albumBasicJDBC;
+package pt15.albumBasicJDBC;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,6 +31,12 @@ public class Track {
         this.milliseconds = milliseconds;
         this.bytes = bytes;
         this.unitPrice = unitPrice;
+    }
+
+    public Track(int trackId, String titol, int albumId) {
+        this.trackId = trackId;
+        this.titol = titol;
+        this.albumId = albumId;
     }
 
     public int getTrackId() {

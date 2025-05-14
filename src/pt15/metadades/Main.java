@@ -1,4 +1,4 @@
-package metadades;
+package pt15.metadades;
 
 import java.sql.*;
 

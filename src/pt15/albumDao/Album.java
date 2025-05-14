@@ -1,4 +1,4 @@
-package albumDao;
+package pt15.albumDao;
 
 public class Album {
     private int idAlbum;

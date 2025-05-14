@@ -1,4 +1,4 @@
-package albumDao;
+package pt15.albumDao;
 
 import java.sql.SQLException;
 import java.util.List;
