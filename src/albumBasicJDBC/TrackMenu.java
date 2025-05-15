@@ -1,5 +1,7 @@
 package albumBasicJDBC;
 
+import pt15.albumBasicJDBC.Track;
+
 import java.sql.*;
 import java.util.Scanner;
 

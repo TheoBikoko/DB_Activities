@@ -1,13 +1,13 @@
 package pt16.ex1;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class Employee {
     private int employeeId;
     private String lastName;
     private String firstName;
     private String title;
-    private Employee reportsTo;
+    private int reportsTo;
     private Date birthDate;
     private Date hireDate;
     private String address;
@@ -19,25 +19,25 @@ public class Employee {
     private String fax;
     private String email;
 
-    public Employee(String email, String fax, String phone, String postalCode, String country, String state, String city, String address, Date hireDate, Date birthDate, Employee reportsTo, String title, String firstName, String lastName, int employeeId) {
-        this.email = email;
-        this.fax = fax;
-        this.phone = phone;
-        this.postalCode = postalCode;
-        this.country = country;
-        this.state = state;
-        this.city = city;
-        this.address = address;
-        this.hireDate = hireDate;
-        this.birthDate = birthDate;
-        this.reportsTo = reportsTo;
-        this.title = title;
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public Employee(int employeeId, String lastName, String firstName, String title, int reportsTo, Date birthDate, Date hireDate, String address, String city, String state, String country, String postalCode, String phone, String fax, String email) {
         this.employeeId = employeeId;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.title = title;
+        this.reportsTo = reportsTo;
+        this.birthDate = birthDate;
+        this.hireDate = hireDate;
+        this.address = address;
+        this.city = city;
+        this.state = state;
+        this.country = country;
+        this.postalCode = postalCode;
+        this.phone = phone;
+        this.fax = fax;
+        this.email = email;
     }
 
-    public Employee(int employeeId, String lastName, String firstName, String title, Employee reportsTo, Date birthDate, Date hireDate) {
+    public Employee(int employeeId, String lastName, String firstName, String title, int reportsTo, Date birthDate, Date hireDate) {
         this.employeeId = employeeId;
         this.lastName = lastName;
         this.firstName = firstName;
@@ -79,11 +79,11 @@ public class Employee {
         this.title = title;
     }
 
-    public Employee getReportsTo() {
+    public int getReportsTo() {
         return reportsTo;
     }
 
-    public void setReportsTo(Employee reportsTo) {
+    public void setReportsTo(int reportsTo) {
         this.reportsTo = reportsTo;
     }
 

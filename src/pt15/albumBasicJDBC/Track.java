@@ -159,7 +159,7 @@ public class Track {
             ps.setInt(1, trackId);
             ResultSet rs = ps.executeQuery();
 
-            while (rs.next()){
+                rs.next();
                 String titol = rs.getString("Name");
                 int albumId = rs.getInt("AlbumId");
                 MediaType mediaType = llegirMediaType(rs.getInt("MediaTypeId"));
@@ -171,7 +171,6 @@ public class Track {
 
                 System.out.println("Track read succesfully.");
                 return new Track(trackId, titol, albumId, mediaType, genre, compositor);
-            }
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

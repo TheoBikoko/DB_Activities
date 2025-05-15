@@ -3,10 +3,10 @@ package pt16.ex1;
 import java.util.List;
 
 public interface DAOGeneric<T> {
-    T createItem(T t);
+    int createItem(T t);
     T readItem (int idItem);
     List<T> readItems();
-    T updateItem(T t);
-    T deleteItem(T t);
+    void updateItem(T t);
+    void deleteItem(T t);
 
 }
