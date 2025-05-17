@@ -31,11 +31,12 @@ public class EmployeeDaoImplementation implements DAOGeneric<Employee>{
             ps.setString(14, employee.getFax());
             ps.setString(15, employee.getEmail());
 
-
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();
             newEmployee = rs.getInt(1);
+            rs.close();
+            ps.close();
             return newEmployee;
         } catch (Exception e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
@@ -44,11 +45,11 @@ public class EmployeeDaoImplementation implements DAOGeneric<Employee>{
     }
 
     @Override
-    public Employee readItem(int idItem) {
-        Employee employee = null;
+    public Employee readItem(int employeeId) {
         try{
             String query = "SELECT * FROM Employee WHERE EmployeeId = ?";
             PreparedStatement ps = con.prepareStatement(query);
+            ps.setInt(1, employeeId);
             ResultSet rs = ps.executeQuery();
             rs.next();
             String newLastName = rs.getString(2);
@@ -65,19 +66,21 @@ public class EmployeeDaoImplementation implements DAOGeneric<Employee>{
             String newPhone = rs.getString(13);
             String newFax = rs.getString(14);
             String newEmail = rs.getString(15);
-            employee = new Employee(idItem, newLastName, newFirstName, newTitle, newReportsTo, newBirthDate, newHireDate, newAddress, newCity, newState, newCountry, newPostalCode, newPhone, newFax, newEmail);
-            return employee;
+            rs.close();
+            ps.close();
+
+            return new Employee(employeeId, newLastName, newFirstName, newTitle, newReportsTo, newBirthDate, newHireDate, newAddress, newCity, newState, newCountry, newPostalCode, newPhone, newFax, newEmail);
         } catch (Exception e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        return employee;
+        return null;
     }
 
     @Override
     public List<Employee> readItems() {
-        List<Employee> employees= new ArrayList<>();
         try{
-            String query = "SELECT * FROM Employee WHERE EmployeeId = ?";
+            List<Employee> employees= new ArrayList<>();
+            String query = "SELECT * FROM Employee";
             PreparedStatement ps = con.prepareStatement(query);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -99,34 +102,38 @@ public class EmployeeDaoImplementation implements DAOGeneric<Employee>{
                 Employee employee = new Employee(newEmployeeId, newLastName, newFirstName, newTitle, newReportsTo, newBirthDate, newHireDate, newAddress, newCity, newState, newCountry, newPostalCode, newPhone, newFax, newEmail);
                 employees.add(employee);
             }
+            rs.close();
+            ps.close();
             return employees;
         } catch (Exception e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        return employees;
+        return null;
     }
 
     @Override
     public void updateItem(Employee employee) {
         try{
-            String query = "UPDATE Employee SET WHERE EmployeeId = ?";
+            con.setAutoCommit(false);
+            String query = "UPDATE Employee SET LastName = ?, FirstName = ?, Title = ?, ReportsTo = ?, BirthDate = ?, HireDate = ?, Address = ?, City = ?, State = ?, Country = ?, PostalCode = ?, Phone = ?, Fax = ?, Email = ? WHERE EmployeeId = ?";
             PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(2, employee.getLastName());
-            ps.setString(3, employee.getFirstName());
-            ps.setString(4, employee.getTitle());
-            ps.setInt(5, employee.getReportsTo());
-            ps.setDate(6, employee.getBirthDate());
-            ps.setDate(7, employee.getHireDate());
-            ps.setString(8, employee.getAddress());
-            ps.setString(9, employee.getCity());
-            ps.setString(10, employee.getState());
-            ps.setString(11, employee.getCountry());
-            ps.setString(12, employee.getPostalCode());
-            ps.setString(13, employee.getPhone());
-            ps.setString(14, employee.getFax());
-            ps.setString(15, employee.getEmail());
+            ps.setString(1, employee.getLastName());
+            ps.setString(2, employee.getFirstName());
+            ps.setString(3, employee.getTitle());
+            ps.setInt(4, employee.getReportsTo());
+            ps.setDate(5, employee.getBirthDate());
+            ps.setDate(6, employee.getHireDate());
+            ps.setString(7, employee.getAddress());
+            ps.setString(8, employee.getCity());
+            ps.setString(9, employee.getState());
+            ps.setString(10, employee.getCountry());
+            ps.setString(11, employee.getPostalCode());
+            ps.setString(12, employee.getPhone());
+            ps.setString(13, employee.getFax());
+            ps.setString(14, employee.getEmail());
+            ps.setInt(15, employee.getEmployeeId());
             ps.executeUpdate();
-            con.commit();;
+            con.commit();
             ps.close();
             System.out.println("Employee with ID " + employee.getEmployeeId() + " modified succesfully");
         } catch (Exception e) {
@@ -137,6 +144,7 @@ public class EmployeeDaoImplementation implements DAOGeneric<Employee>{
     @Override
     public void deleteItem(Employee employee) {
         try{
+        con.setAutoCommit(false);
         String query = "DELETE FROM Employee WHERE EmployeeId = ?";
         PreparedStatement ps = con.prepareStatement(query);
         ps.setInt(1, employee.getEmployeeId());

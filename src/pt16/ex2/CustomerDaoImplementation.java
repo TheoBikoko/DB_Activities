@@ -1,10 +1,9 @@
 package pt16.ex2;
 
-import pt15.albumBasicJDBC.Artist;
 import pt16.ex1.DAOGeneric;
 import pt16.ex1.Employee;
+import pt16.ex1.EmployeeDaoImplementation;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -15,9 +14,10 @@ import static pt15.albumDao.Connexio.con;
 public class CustomerDaoImplementation implements DAOGeneric<Customer> {
     @Override
     public int createItem(Customer customer) {
-        int newEmployee = -1;
+        int newCustomer = -1;
         try {
-            String query = "INSERT INTO Customer VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            EmployeeDaoImplementation edao = new EmployeeDaoImplementation();
+            String query = "INSERT INTO Customer VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
             PreparedStatement ps = con.prepareStatement(query);
             ps.setInt(1, customer.getCustomerId());
             ps.setString(2, customer.getFirstName());
@@ -31,106 +31,109 @@ public class CustomerDaoImplementation implements DAOGeneric<Customer> {
             ps.setString(10, customer.getPhone());
             ps.setString(11, customer.getFax());
             ps.setString(12, customer.getEmail());
-            ps.setObject(13, readEmployee(customer.getSupportRepresentative().getEmployeeId()));
-
+            ps.setObject(13, edao.readItem(customer.getSupportRepresentative().getEmployeeId()));
 
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();
-            newEmployee = rs.getInt(1);
-            return newEmployee;
+            newCustomer = rs.getInt(1);
+            rs.close();
+            ps.close();
+            return newCustomer;
         } catch (Exception e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        return newEmployee;
+        return newCustomer;
     }
 
     @Override
     public Customer readItem(int idItem) {
-        Employee employee = null;
         try{
-            String query = "SELECT * FROM Customer WHERE EmployeeId = ?";
+            EmployeeDaoImplementation edao = new EmployeeDaoImplementation();
+            String query = "SELECT * FROM Customer WHERE CustomerId = ?";
             PreparedStatement ps = con.prepareStatement(query);
+            ps.setInt(1, idItem);
             ResultSet rs = ps.executeQuery();
             rs.next();
-            String newLastName = rs.getString(2);
-            String newFirstName = rs.getString(3);
-            String newTitle = rs.getString(4);
-            int newReportsTo = rs.getInt(5);
-            Date newBirthDate = rs.getDate(6);
-            Date newHireDate = rs.getDate(7);
-            String newAddress = rs.getString(8);
-            String newCity = rs.getString(9);
-            String newState = rs.getString(10);
-            String newCountry = rs.getString(11);
-            String newPostalCode = rs.getString(12);
-            String newPhone = rs.getString(13);
-            String newFax = rs.getString(14);
-            String newEmail = rs.getString(15);
-            employee = new Employee(idItem, newLastName, newFirstName, newTitle, newReportsTo, newBirthDate, newHireDate, newAddress, newCity, newState, newCountry, newPostalCode, newPhone, newFax, newEmail);
-            return employee;
+            String newFirstName = rs.getString(2);
+            String newLastName = rs.getString(3);
+            String newCompany = rs.getString(4);
+            String newAddress = rs.getString(5);
+            String newCity = rs.getString(6);
+            String newState = rs.getString(7);
+            String newCountry = rs.getString(8);
+            String newPostalCode = rs.getString(9);
+            String newPhone = rs.getString(10);
+            String newFax = rs.getString(11);
+            String newEmail = rs.getString(12);
+            Employee newSupportRepresentative = edao.readItem(rs.getInt(13));
+            rs.close();
+            ps.close();
+            return new Customer(idItem, newLastName, newFirstName, newCompany, newAddress, newCity, newState, newCountry, newPostalCode, newPhone, newFax, newEmail, newSupportRepresentative);
         } catch (Exception e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        return employee;
+        return null;
     }
 
     @Override
     public List<Customer> readItems() {
-        List<Customer> customers= new ArrayList<>();
         try{
-            String query = "SELECT * FROM Employee WHERE EmployeeId = ?";
+            EmployeeDaoImplementation edao = new EmployeeDaoImplementation();
+            List<Customer> customers= new ArrayList<>();
+            String query = "SELECT * FROM Customer";
             PreparedStatement ps = con.prepareStatement(query);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                int newEmployeeId = rs.getInt(1);
-                String newLastName = rs.getString(2);
-                String newFirstName = rs.getString(3);
-                String newTitle = rs.getString(4);
-                int newReportsTo = rs.getInt(5);
-                Date newBirthDate = rs.getDate(6);
-                Date newHireDate = rs.getDate(7);
-                String newAddress = rs.getString(8);
-                String newCity = rs.getString(9);
-                String newState = rs.getString(10);
-                String newCountry = rs.getString(11);
-                String newPostalCode = rs.getString(12);
-                String newPhone = rs.getString(13);
-                String newFax = rs.getString(14);
-                String newEmail = rs.getString(15);
-                Employee employee = new Employee(newEmployeeId, newLastName, newFirstName, newTitle, newReportsTo, newBirthDate, newHireDate, newAddress, newCity, newState, newCountry, newPostalCode, newPhone, newFax, newEmail);
-                employees.add(employee);
+                int newCustomerId = rs.getInt(1);
+                String newFirstName = rs.getString(2);
+                String newLastName = rs.getString(3);
+                String newCompany = rs.getString(4);
+                String newAddress = rs.getString(5);
+                String newCity = rs.getString(6);
+                String newState = rs.getString(7);
+                String newCountry = rs.getString(8);
+                String newPostalCode = rs.getString(9);
+                String newPhone = rs.getString(10);
+                String newFax = rs.getString(11);
+                String newEmail = rs.getString(12);
+                Employee newSupportRepresentative = edao.readItem(rs.getInt(13));
+                Customer customer = new Customer(newCustomerId, newLastName, newFirstName, newCompany, newAddress, newCity, newState, newCountry, newPostalCode, newPhone, newFax, newEmail, newSupportRepresentative);
+                customers.add(customer);
             }
-            return employees;
+            rs.close();
+            ps.close();
+            return customers;
         } catch (Exception e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        return employees;
+        return null;
     }
 
     @Override
     public void updateItem(Customer customer) {
         try{
-            String query = "UPDATE Employee SET WHERE EmployeeId = ?";
+            EmployeeDaoImplementation edao = new EmployeeDaoImplementation();
+            con.setAutoCommit(false);
+            String query = "UPDATE Customer SET FirstName = ?, LastName = ?, Company = ?, Address = ?, City = ?, State = ?, Country = ?, PostalCode = ?, Phone = ?, Fax = ?, Email = ?, SupportRepId = ? WHERE CustomerId = ?";
             PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(2, employee.getLastName());
-            ps.setString(3, employee.getFirstName());
-            ps.setString(4, employee.getTitle());
-            ps.setInt(5, employee.getReportsTo());
-            ps.setDate(6, employee.getBirthDate());
-            ps.setDate(7, employee.getHireDate());
-            ps.setString(8, employee.getAddress());
-            ps.setString(9, employee.getCity());
-            ps.setString(10, employee.getState());
-            ps.setString(11, employee.getCountry());
-            ps.setString(12, employee.getPostalCode());
-            ps.setString(13, employee.getPhone());
-            ps.setString(14, employee.getFax());
-            ps.setString(15, employee.getEmail());
+            ps.setString(1, customer.getFirstName());
+            ps.setString(2, customer.getLastName());
+            ps.setString(3, customer.getCompany());
+            ps.setString(4, customer.getAddress());
+            ps.setString(5, customer.getCity());
+            ps.setString(6, customer.getState());
+            ps.setString(7, customer.getCountry());
+            ps.setString(8, customer.getPostalCode());
+            ps.setString(9, customer.getPhone());
+            ps.setString(10, customer.getFax());
+            ps.setString(11, customer.getEmail());
+            ps.setObject(12, edao.readItem(customer.getSupportRepresentative().getEmployeeId()));
+            ps.setInt(13, customer.getCustomerId());
             ps.executeUpdate();
-            con.commit();;
+            con.commit();
             ps.close();
-            System.out.println("Employee with ID " + employee.getEmployeeId() + " modified succesfully");
+            System.out.println("Customer with ID " + customer.getCustomerId() + " modified succesfully");
         } catch (Exception e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
@@ -139,45 +142,16 @@ public class CustomerDaoImplementation implements DAOGeneric<Customer> {
     @Override
     public void deleteItem(Customer customer) {
         try{
-            String query = "DELETE FROM Employee WHERE EmployeeId = ?";
+            con.setAutoCommit(false);
+            String query = "DELETE FROM Customer WHERE CustomerId = ?";
             PreparedStatement ps = con.prepareStatement(query);
-            ps.setInt(1, employee.getEmployeeId());
+            ps.setInt(1, customer.getCustomerId());
             ps.executeUpdate();
             con.commit();
             ps.close();
-            System.out.println("Employee with ID " + employee.getEmployeeId() + " deleted succesfully");
+            System.out.println("Customer with ID " + customer.getCustomerId() + " deleted succesfully");
         } catch (Exception e) {
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
         }
     }
-
-    public Employee readEmployee(int idItem) {
-        Employee employee = null;
-        try{
-            String query = "SELECT * FROM Employee WHERE EmployeeId = ?";
-            PreparedStatement ps = con.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            String newLastName = rs.getString(2);
-            String newFirstName = rs.getString(3);
-            String newTitle = rs.getString(4);
-            int newReportsTo = rs.getInt(5);
-            Date newBirthDate = rs.getDate(6);
-            Date newHireDate = rs.getDate(7);
-            String newAddress = rs.getString(8);
-            String newCity = rs.getString(9);
-            String newState = rs.getString(10);
-            String newCountry = rs.getString(11);
-            String newPostalCode = rs.getString(12);
-            String newPhone = rs.getString(13);
-            String newFax = rs.getString(14);
-            String newEmail = rs.getString(15);
-            employee = new Employee(idItem, newLastName, newFirstName, newTitle, newReportsTo, newBirthDate, newHireDate, newAddress, newCity, newState, newCountry, newPostalCode, newPhone, newFax, newEmail);
-            return employee;
-        } catch (Exception e) {
-            System.out.println(e.getClass().getName() + ": " + e.getMessage());
-        }
-        return employee;
-    }
-
 }

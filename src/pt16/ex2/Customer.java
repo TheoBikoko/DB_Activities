@@ -17,6 +17,25 @@ public class Customer {
     private String email;
     private Employee supportRepresentative;
 
+    public Customer() {
+    }
+
+    public Customer(int customerId, String firstName, String lastName, String company, String address, String city, String state, String country, String postalCode, String phone, String fax, String email, Employee supportRepresentative) {
+        this.customerId = customerId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.company = company;
+        this.address = address;
+        this.city = city;
+        this.state = state;
+        this.country = country;
+        this.postalCode = postalCode;
+        this.phone = phone;
+        this.fax = fax;
+        this.email = email;
+        this.supportRepresentative = supportRepresentative;
+    }
+
     public Customer(int customerId, String firstName, String lastName, String address, String city, String country, String phone, String email, Employee supportRepresentative) {
         this.customerId = customerId;
         this.firstName = firstName;

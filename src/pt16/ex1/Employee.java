@@ -19,6 +19,9 @@ public class Employee {
     private String fax;
     private String email;
 
+    public Employee() {
+    }
+
     public Employee(int employeeId, String lastName, String firstName, String title, int reportsTo, Date birthDate, Date hireDate, String address, String city, String state, String country, String postalCode, String phone, String fax, String email) {
         this.employeeId = employeeId;
         this.lastName = lastName;
